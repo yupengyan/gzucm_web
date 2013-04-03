@@ -1,6 +1,17 @@
-*.class
-
 # Package Files #
 *.jar
 *.war
 *.ear
+
+# Project Exclude #
+.settings
+.project
+*.class
+.classpath
+pom.xml
+bin
+target
+
+# Special Exclude#
+#SinaWeibo2Connector.java
+#ProviderConnectorImpl.java
