@@ -5,8 +5,8 @@ import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
 
-import cn.edu.gzucm.web.data.CommentListPerStatus;
-import cn.edu.gzucm.web.data.RepostListPerStatus;
+import cn.edu.gzucm.web.data.model.CommentListPerStatus;
+import cn.edu.gzucm.web.data.model.RepostListPerStatus;
 import cn.edu.gzucm.web.sns.ProviderConnector;
 import cn.edu.gzucm.web.sns.MyApiException;
 import cn.edu.gzucm.web.sns.sina.SinaWeibo2Connector;

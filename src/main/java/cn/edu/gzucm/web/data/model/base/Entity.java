@@ -1,4 +1,4 @@
-package cn.edu.gzucm.web.data.base;
+package cn.edu.gzucm.web.data.model.base;
 
 import java.io.Serializable;
 import java.util.Date;

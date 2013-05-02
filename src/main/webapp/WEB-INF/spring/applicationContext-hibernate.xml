@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Application context definition on Hibernate. -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+			http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+			http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+			http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+	    http://www.springframework.org/schema/data/mongo
+    	http://www.springframework.org/schema/data/mongo/spring-mongo-1.0.xsd
+    	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
+
+	<!-- ========================= RESOURCE DEFINITIONS ========================= -->
+
+	<!-- import the dataSource definition -->
+	<import resource="applicationContext-dataSource.xml" />
+
+	<mongo:mongo id="mongo" host="${nosql.server}">
+		<mongo:options connections-per-host="40" threads-allowed-to-block-for-connection-multiplier="1500" />
+	</mongo:mongo>
+	<bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
+		<constructor-arg ref="mongo" />
+		<constructor-arg value="${nosql.databaseName}" />
+		<property name="writeConcern">
+			<util:constant static-field="com.mongodb.WriteConcern.SAFE" />
+		</property>
+	</bean>
+
+
+	<!-- Configures that replaces ${...} placeholders with values from a properties file -->
+	<!-- (in this case, Hibernate-related settings for the sessionFactory definition below) -->
+	<context:property-placeholder location="classpath:jdbc.properties" />
+
+	<!-- Enable annotation style of managing transactions -->
+	<tx:annotation-driven transaction-manager="transactionManager" />
+
+	<!-- Declare the Hibernate SessionFactory for retrieving Hibernate sessions -->
+	<!-- See http://static.springsource.org/spring/docs/3.0.x/javadoc-api/org/springframework/orm/hibernate3/annotation/AnnotationSessionFactoryBean.html -->
+	<!-- See http://docs.jboss.org/hibernate/stable/core/api/index.html?org/hibernate/SessionFactory.html -->
+	<!-- See http://docs.jboss.org/hibernate/stable/core/api/index.html?org/hibernate/Session.html -->
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean"
+		p:dataSource-ref="dataSource" p:packagesToScan="cn.edu.gzucm.web">
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">${hibernate.dialect}</prop>
+				<prop key="hibernate.show_sql">${hibernate.show_sql}</prop>
+			</props>
+		</property>
+	</bean>
+	<bean id="transactionManager"
+		class="org.springframework.orm.hibernate4.HibernateTransactionManager"
+		p:sessionFactory-ref="sessionFactory">
+		<property name="hibernateManagedSession" value="false" />
+	</bean>
+
+
+	<!-- ========================= BUSINESS OBJECT DEFINITIONS ========================= -->
+
+	<!-- Activates various annotations to be detected in bean classes: Spring's 
+		@Required and @Autowired, as well as JSR 250's @Resource. -->
+	<!-- <context:annotation-config /> -->
+
+	<!-- Exporter that exposes the Hibernate statistics service via JMX. Autodetects 
+		the service MBean, using its bean name as JMX object name. -->
+	<!-- <context:mbean-export /> -->
+
+
+	<!-- Hibernate's JMX statistics service -->
+	<!-- <bean name="xuanker:type=HibernateStatistics" class="org.hibernate.jmx.StatisticsService" 
+		autowire="byName" /> -->
+
+
+	<bean id="RAMScheduler"
+		class="org.springframework.scheduling.quartz.SchedulerFactoryBean"
+		lazy-init="false">
+		<property name="schedulerName" value="myScheduler" />
+		<property name="autoStartup">
+			<value>true</value>
+		</property>
+
+		<property name="applicationContextSchedulerContextKey">
+			<value>applicationContext</value>
+		</property>
+
+		<property name="overwriteExistingJobs">
+			<value>true</value>
+		</property>
+
+		<property name="waitForJobsToCompleteOnShutdown">
+			<value>true</value>
+		</property>
+
+		<property name="quartzProperties">
+			<props>
+				<!-- ThreadPool -->
+				<prop key="org.quartz.threadPool.class">org.quartz.simpl.SimpleThreadPool</prop>
+				<prop key="org.quartz.threadPool.threadCount">${quartz.thread.count}</prop>
+				<prop key="org.quartz.threadPool.threadPriority">5</prop>
+				<prop key="org.quartz.jobStore.class">org.quartz.simpl.RAMJobStore</prop>
+				<prop key="org.quartz.jobStore.misfireThreshold">${quartz.misfireThreshold}</prop>
+				<prop key="org.quartz.scheduler.instanceId">AUTO</prop>
+			</props>
+		</property>
+	</bean>
+
+
+	<bean id="taskExecutor"
+		class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+		<property name="corePoolSize" value="10" />
+		<property name="maxPoolSize" value="30" />
+		<property name="keepAliveSeconds" value="1200" />
+		<property name="queueCapacity" value="1000000" />
+	</bean>
+
+</beans>

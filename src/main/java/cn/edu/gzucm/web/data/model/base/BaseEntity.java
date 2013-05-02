@@ -1,9 +1,8 @@
-package cn.edu.gzucm.web.data.base;
+package cn.edu.gzucm.web.data.model.base;
 
 import java.util.Date;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Field;
 
 /**
  * NoSQL的实体父类
@@ -15,10 +14,10 @@ public class BaseEntity implements Entity {
 
     @Id
     private String id;
-    @Field(value = "cdt")
+    //    @Field(value = "cdt")
     private Date created;
 
-    @Field(value = "upd")
+    //    @Field(value = "upd")
     private Date updated;
 
     public String getId() {

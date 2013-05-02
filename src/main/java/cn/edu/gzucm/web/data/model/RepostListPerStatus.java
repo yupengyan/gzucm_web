@@ -1,4 +1,4 @@
-package cn.edu.gzucm.web.data;
+package cn.edu.gzucm.web.data.model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,21 +7,23 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.map.annotate.JsonDeserialize;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
+
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class CommentListPerStatus {
-    @JsonDeserialize(contentAs = Comment.class)
-    @JsonSerialize(contentAs = Comment.class)
-    private List<Comment> comments = new ArrayList<Comment>();
+public class RepostListPerStatus {
+
+    @JsonDeserialize(contentAs = Status.class)
+    @JsonSerialize(contentAs = Status.class)
+    private List<Status> reposts = new ArrayList<Status>();
     private int total_number;
 
-    public List<Comment> getComments() {
+    public List<Status> getStatuses() {
 
-        return comments;
+        return reposts;
     }
 
-    public void setComments(List<Comment> comments) {
+    public void setStatuses(List<Status> statuses) {
 
-        this.comments = comments;
+        this.reposts = statuses;
     }
 
     public int getTotal_number() {

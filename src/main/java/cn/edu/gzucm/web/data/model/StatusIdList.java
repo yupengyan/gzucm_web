@@ -1,4 +1,4 @@
-package cn.edu.gzucm.web.data;
+package cn.edu.gzucm.web.data.model;
 
 import java.util.ArrayList;
 import java.util.List;
