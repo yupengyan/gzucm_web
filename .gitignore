@@ -11,7 +11,9 @@
 #pom.xml
 bin
 target
+work
 
 # Special Exclude#
 #SinaWeibo2Connector.java
 #ProviderConnectorImpl.java
+/.tomcatplugin
